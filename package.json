@@ -1,0 +1,23 @@
+{
+  "name": "fluenco_backend",
+  "version": "1.0.0",
+  "description": "Read me File",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/shyftlabs/Fluenco_Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shyftlabs/Fluenco_Backend/issues"
+  },
+  "homepage": "https://github.com/shyftlabs/Fluenco_Backend#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
