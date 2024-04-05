@@ -1,11 +1,10 @@
 require("dotenv").config({ path: "./env" });
 const express = require("express");
-
 const cors = require("cors");
 const app = express();
-const connectDB = require("./db/index.js");
+// const connectDB = require("./db/index.js");
 
-connectDB();
+// connectDB();
 
 app.use(
   cors({
@@ -615,6 +614,6 @@ app.get("/api/creator", (req, res) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(process.env.PORT, () => {
-  console.log("listening on port" + port);
+app.listen(port ,() => {
+  console.log("listening on port " + port);
 });
