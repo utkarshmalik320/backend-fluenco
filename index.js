@@ -1,16 +1,19 @@
-require("dotenv").config({ path: "./env" });
-const express = require("express");
-const cors = require("cors");
-const app = express();
-// const connectDB = require("./db/index.js");
 
-// connectDB();
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+const app = express();
+import connectDB from "./db/index.js";
+// import {app} from "./app.js";
+connectDB();
 
 app.use(
   cors({
     origin: "*",
   })
 );
+
+dotenv.config({ path: "./env" });
 
 app.get("/", (req, res) => {
   res.send("Welcome");
