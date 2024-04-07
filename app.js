@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 // import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import couponRouter from "./routes/coupon.routes.js";
 
 export const app = express();
 
@@ -20,6 +21,8 @@ app.use(
 
 // Routes
 app.use("/api/v1/users", userRouter);
+
+app.use("/api/v1/coupons" ,couponRouter); 
 
 app.get("/", (req,res)=>{
   res.send("Welcome to the ");
