@@ -1,8 +1,12 @@
-require("dotenv").config({ path: "./env" });
+// User.js
+import dotenv from "dotenv";
 import mongoose from "mongoose";
-const Schema = mongoose.Schema;
-import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import Jwt from "jsonwebtoken";
+
+dotenv.config({ path: "./env" });
+
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
@@ -39,7 +43,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-    },
+    }, 
     youtubelink: {
       type: String,
       required: true,
@@ -70,8 +74,8 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-    return await bcrypt.compare(password, this.password);
-  };
+  return await bcrypt.compare(password, this.password);
+};
 
 userSchema.methods.generateAccessToken = function () {
   return Jwt.sign(
@@ -100,7 +104,5 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-
-
-export const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = mongoose.model("User", userSchema);
+export default User;

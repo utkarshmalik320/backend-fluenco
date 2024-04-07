@@ -1,7 +1,6 @@
 import express from 'express';
-import upload from 'wherever/your/upload/middleware/is/defined';
-import { registerUser } from '../controllers/userController.js'; // Import your controller function
-
+import {upload} from '../middlewares/multer.middleware.js'
+import  {registerUser}  from '../controllers/user.controller.js'; // Import your controller function
 const router = express.Router();
 
 router.route("/register").post(
