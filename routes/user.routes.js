@@ -16,18 +16,3 @@ router.route("/register").post(
 
 
 export default router;
-
-
-
-
-// import express from 'express';
-
-// const router = express.Router();
-
-
-// router.route("/registe").post('/', (req, res) => {
-//   // Handle POST request
-//   res.send('POST request received');
-// });
-
-// export default router;
