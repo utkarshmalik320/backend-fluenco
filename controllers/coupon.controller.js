@@ -3,7 +3,7 @@ const { ApiError } = require("../utils/apiError")
 const { ApiResponse } = require("../utils/apiResponse")
 
 
-const addCoupon  = async(req,res,/*next*/)=>{
+const addCoupon  = async(req,res,next)=>{
     try {
         const {brandName, category, couponCode, expiry, websiteLink, termsCondition} = req.body
         // const influencer = req.influencer
@@ -43,8 +43,9 @@ const addCoupon  = async(req,res,/*next*/)=>{
         res.status(201).json(
             new ApiResponse(200, createdCoupon, "Coupon created Successfully")
         )
-        // next()
+        next()
     } catch (error) {
+        console.log(error)
         throw new ApiError(400, "Error in adding a Coupon")
     }
     
