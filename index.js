@@ -1,25 +1,16 @@
+const app = require("./app.js").app
+const connectDB  = require("./DataBase/database.js");
+const cors = require("cors");
 
-import dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
-import connectDB from "./db/index.js";
-import userRouter from "./routes/user.routes.js";  
-import {app} from "./app.js";
-connectDB();
+const port = process.env.PORT
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
-
-dotenv.config({ path: "./env" });
-
-const port = process.env.PORT || 3000;
-
-app.listen(port ,() => {
-  console.log("listening on port " + port);
-});
+app.use(cors({
+    origin: process.env.CORS_ORIGIN 
+}));
 
 
+connectDB()
 
+app.listen(port, ()=>{
+    console.log(`Server running on port ${port}`);
+})

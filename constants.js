@@ -1,2 +1,2 @@
 const DB_NAME = "Fluenco";
-export { DB_NAME };
+module.exports = { DB_NAME };

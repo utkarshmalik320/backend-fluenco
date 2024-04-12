@@ -1,54 +1,86 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import Coupon from "../models/coupon.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+const { Coupons } = require("../models/coupon.model.js");
+const { ApiError } = require("../utils/apiError")
+const { ApiResponse } = require("../utils/apiResponse")
 
-const createCoupon = asyncHandler(async (req, res) => {
 
-        const { brand, category, coupon_code, valid_till, product_link, terms_and_conditions } = req.body;
-        if (!brand,  !category, !coupon_code, !valid_till , !product_link , !terms_and_conditions ) {
-            throw new ApiError(400, "All fields are required");
+const addCoupon  = async(req,res,/*next*/)=>{
+    try {
+        const {brandName, category, couponCode, expiry, websiteLink, termsCondition} = req.body
+        // const influencer = req.influencer
+        const existingCoupon = await Coupons.findOne({couponCode})
+        if(existingCoupon){
+            throw new ApiError(400, "Coupon already exists")
+    
         }
-
-        const existingCoupon = await Coupon.findOne({ 
-            $or: [{coupon_code}],
-         });
-        if (existingCoupon) {
-            throw new ApiError(409, "Coupon with the same code already exists");
+        
+        if([ category, couponCode,expiry, brandName, websiteLink, termsCondition].some((item)=>item?.trim() === "")){
+            throw new ApiError(400, "All fields are required")
         }
-
-        const coupon = await Coupon.create({
-            brand,
+    
+        // const existedCoupon = await Coupons.findOne({couponCode})
+        // if(existedCoupon){
+        //     throw new ApiError(400, "Coupon already exist")
+        // }
+    
+        const coupon = await Coupons.create({
+            brandName,
             category,
-            coupon_code,
-            valid_till,
-            product_link,
-            terms_and_conditions
-        });
-
-        const createdCoupon = await Coupon.findById(coupon._id);
-        if (!createdCoupon) {
-            throw new ApiError(500, "Something went wrong in creating the coupon");
+            couponCode,
+            expiry,
+            websiteLink,
+            termsCondition
+    
+        })
+    
+        
+        // req.coupon = coupon
+        const createdCoupon = await Coupons.findById(coupon._id)
+        
+        if(!createdCoupon){
+            throw new ApiError(500, "Something went wrong while creating")
         }
+        
+        res.status(201).json(
+            new ApiResponse(200, createdCoupon, "Coupon created Successfully")
+        )
+        // next()
+    } catch (error) {
+        throw new ApiError(400, "Error in adding a Coupon")
+    }
+    
+}
+const getAllCoupons  = async(req,res)=>{
+    try {
+        const coupons = await Coupons.find({})
+        res.status(201).json(
+            new ApiResponse(200, coupons, "All coupons recieved")
+        )
+    } catch (error) {
+        throw new ApiError(400, "Coupons not found")
+    }
 
-        return res.status(201).json(new ApiResponse(200, createdCoupon, "Coupon created successfully"));
-    });
+}
 
-// const getCoupons = asyncHandler(async (req, res) => {
-//     try {
-//         const { page = 1, limit = 10 } = req.query;
 
-//         const options = {
-//             page: parseInt(page, 10),
-//             limit: parseInt(limit, 10)
-//         };
+const deleteCoupon = async(req,res)=>{
+    try {
+        const {id} = req.params
+        if(!id){
+            throw new ApiError(400, "Coupon Code Not Found")
+        }
+        const coupon = await Coupons.findById(id);
 
-//         const coupons = await Coupon.aggregatePaginate({}, options);
-//         return res.status(200).json(new ApiResponse(200, coupons, "Coupons fetched successfully"));
-//     } catch (error) {
-//         // Handle errors
-//       throw new ApiError(401, "Fetching gone wrong ");
-//     }
-// });
+        await coupon.deleteOne(coupon)
 
-export { createCoupon};
+        res.status(200).json(
+            new ApiResponse(200, "Coupon deleted Successfully")
+        )
+
+
+    } catch (error) {
+        throw new ApiError(400, "Cannot delete the Coupon")
+    }
+}
+
+
+module.exports = {getAllCoupons, addCoupon, deleteCoupon}

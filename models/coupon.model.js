@@ -1,45 +1,42 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
-import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+const mongoose = require("mongoose")
 
-const couponSchema = new Schema(
-  {
-    brand: {
-      type: String,
-      required: [true, 'Brand is required.'],
-      trim: true,
-    },
-    category: {
-      type: String,
-      required: [true, 'Category is required.'],
-      trim: true,
-    },
-    coupon_code: {
-      type: String,
-      required: [true, 'Coupon code is required.'],
-      unique: true,
-      trim: true,
-    },
-    valid_till: {
-      type: String,
-      required: [true, 'Valid till date is required.'],
-    },
-    product_link: {
-      type: String,
-      required: [true, 'Product link is required.'],
-    },
-    terms_and_conditions: {
-      type: String,
-      required: [true, 'Terms and conditions are required.'],
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
 
-couponSchema.plugin(mongooseAggregatePaginate);
+const couponSchema = new mongoose.Schema({
+    brandName:{
+        type: String,
+        required: true
+    },
+    category:{
+        type: String,
+        required: true
+    },
+    couponCode:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    expiry:{
+        type: String,
+        required: true
+    },
+    websiteLink:{
+        type: String,
+        required: true
+    },
+    termsCondition:{
+        type: String,
+        required: true
+    }
+    // influencer:{
+    //     type: mongoose.Types.ObjectId,
+    //     required: true,
+    //     ref: "Influencer"
+    // }
+}, {timestamps: true})
 
-const Coupon = model("Coupon", couponSchema);
 
-export default Coupon;
+
+
+const Coupons = mongoose.model("Coupon", couponSchema)
+
+module.exports = {Coupons}
