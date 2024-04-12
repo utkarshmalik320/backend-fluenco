@@ -25,7 +25,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/coupons" ,couponRouter); 
 
 
-app.get("/api/couponData", (req, res) => {
+app.get("/api/couponData",  async (req, res) => {
   const couponData = [
     {
       id: 1,
@@ -34,6 +34,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Electronics",
       productLink: "https://example.com/product123",
       validTill: "2024-05-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 2,
@@ -42,6 +43,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Clothing",
       productLink: "https://anotherbrand.com/shirt456",
       validTill: "2024-06-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 3,
@@ -50,6 +52,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Apparel",
       productLink: "https://fashionoutlet.com/dress789",
       validTill: "2024-04-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 4,
@@ -58,6 +61,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Home & Garden",
       productLink: "https://homegoods.com/furniture101",
       validTill: "2024-05-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 5,
@@ -66,6 +70,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Electronics",
       productLink: "https://techhaven.com/laptop234",
       validTill: "2024-06-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 6,
@@ -74,6 +79,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Sports & Outdoors",
       productLink: "https://outdooradventures.com/tent567",
       validTill: "2024-07-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 7,
@@ -82,6 +88,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Books",
       productLink: "https://bookemporium.com/book789",
       validTill: "2024-06-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 8,
@@ -90,6 +97,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Groceries",
       productLink: "https://groceryworld.com/product789",
       validTill: "2024-05-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 9,
@@ -98,6 +106,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Health & Fitness",
       productLink: "https://fitnesscenter.com/membership123",
       validTill: "2024-05-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 10,
@@ -106,6 +115,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Home & Garden",
       productLink: "https://furnituremart.com/sofa456",
       validTill: "2024-04-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 11,
@@ -114,6 +124,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Beauty",
       productLink: "https://beautyessentials.com/lipstick789",
       validTill: "2024-06-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 12,
@@ -122,6 +133,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Pets",
       productLink: "https://petparadise.com/dogfood123",
       validTill: "2024-05-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 13,
@@ -130,6 +142,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Apparel",
       productLink: "https://fashionhub.com/shoes789",
       validTill: "2024-04-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 14,
@@ -138,6 +151,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Electronics",
       productLink: "https://gadgetuniverse.com/smartwatch456",
       validTill: "2024-05-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 15,
@@ -146,6 +160,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Toys",
       productLink: "https://toyland.com/actionfigure789",
       validTill: "2024-06-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 16,
@@ -154,6 +169,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Home & Garden",
       productLink: "https://gardenoasis.com/plants101",
       validTill: "2024-04-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 17,
@@ -162,6 +178,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Travel",
       productLink: "https://beachessentials.com/sunglasses789",
       validTill: "2024-07-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 18,
@@ -170,6 +187,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Health & Fitness",
       productLink: "https://healthhaven.com/vitamins123",
       validTill: "2024-05-31",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 19,
@@ -178,6 +196,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Electronics",
       productLink: "https://electroworld.com/smartphone789",
       validTill: "2024-06-30",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 20,
@@ -186,6 +205,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Food & Beverages",
       productLink: "https://snackcorner.com/chips123",
       validTill: "2024-05-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 21,
@@ -194,6 +214,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Entertainment",
       productLink: "https://entertainmentzone.com/tickets789",
       validTill: "2024-06-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 22,
@@ -202,6 +223,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Movies",
       productLink: "https://cineplex.com/deals123",
       validTill: "2024-07-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 23,
@@ -210,6 +232,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Outdoor Activities",
       productLink: "https://adventurepark.com/specialoffer456",
       validTill: "2024-08-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 24,
@@ -218,6 +241,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Gaming",
       productLink: "https://gamestop.com/discount789",
       validTill: "2024-09-05",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 25,
@@ -226,6 +250,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Books",
       productLink: "https://bookstore.com/salebooks123",
       validTill: "2024-10-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 26,
@@ -234,6 +259,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Sports",
       productLink: "https://sportsoutlet.com/sportsdeal456",
       validTill: "2024-11-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 27,
@@ -242,6 +268,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Fashion",
       productLink: "https://fashionboutique.com/fashionoffer789",
       validTill: "2024-12-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 28,
@@ -250,6 +277,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Electronics",
       productLink: "https://electronicsstore.com/techdiscount123",
       validTill: "2025-01-05",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 29,
@@ -258,6 +286,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Food & Dining",
       productLink: "https://restaurant.com/fooddeal456",
       validTill: "2025-02-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 30,
@@ -266,6 +295,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Travel",
       productLink: "https://travelagency.com/traveloffer789",
       validTill: "2025-03-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 31,
@@ -274,6 +304,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Pets",
       productLink: "https://petstore.com/petsale123",
       validTill: "2025-04-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 32,
@@ -282,6 +313,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Fitness",
       productLink: "https://fitnesscenter.com/fitnessoffer456",
       validTill: "2025-05-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 33,
@@ -290,6 +322,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Home & Decor",
       productLink: "https://homegoods.com/homedeal789",
       validTill: "2025-06-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 34,
@@ -298,6 +331,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Art",
       productLink: "https://artgallery.com/artoffer123",
       validTill: "2025-07-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 35,
@@ -306,6 +340,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Gardening",
       productLink: "https://gardencenter.com/gardendeal456",
       validTill: "2025-08-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 36,
@@ -314,6 +349,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Health & Wellness",
       productLink: "https://healthstore.com/healthoffer789",
       validTill: "2025-09-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 37,
@@ -322,6 +358,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Beauty",
       productLink: "https://beautysalon.com/beautydiscount123",
       validTill: "2025-10-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 38,
@@ -330,6 +367,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Crafts",
       productLink: "https://craftstore.com/craftdeal456",
       validTill: "2025-11-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 39,
@@ -338,6 +376,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Hobbies",
       productLink: "https://hobbyshop.com/hobbyoffer789",
       validTill: "2025-12-20",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 40,
@@ -346,6 +385,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Music",
       productLink: "https://musicstore.com/musicdeal123",
       validTill: "2026-01-10",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 41,
@@ -354,6 +394,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Fitness",
       productLink: "https://gym.com/fitnessoffer456",
       validTill: "2026-02-15",
+      terms_and_condition: "Please refer to terms and conditions for details."
     },
     {
       id: 42,
@@ -362,6 +403,7 @@ app.get("/api/couponData", (req, res) => {
       category: "Gaming",
       productLink: "https://gamingstore.com/gamingdiscount789",
       validTill: "2026-03-20",
+      
     },
     {
       id: 43,
