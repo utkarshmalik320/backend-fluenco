@@ -8,7 +8,8 @@ const { updateCoupons } = require("../middlewares/updateInfluencerCoupons.js");
 const router = express.Router();
 
 
-router.route("/add").post(verifyJWT , addCoupon , updateCoupons)
+// router.route("/add").post(verifyJWT, addCoupon , updateCoupons)
+router.route("/add").post(addCoupon)
 router.route("/getCoupons").get(getAllCoupons)
 router.route("/deleteCoupon/:id").put(deleteCoupon)
 

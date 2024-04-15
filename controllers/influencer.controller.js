@@ -7,7 +7,7 @@ const { generateAccessAndRefresTokens } = require("../utils/tokens.js")
 
 
 const registerInfluencer = async(req,res)=>{
-    const {name, username, category, password, email, youtubeLink,instagramLink} = req.body
+    const {name, username, category, password, email, youtubeLink, instagramLink} = req.body
     if(
         [name, username, category, password].some((field)=> field?.trim() === "")    
     ){
@@ -22,23 +22,18 @@ const registerInfluencer = async(req,res)=>{
         throw new ApiError(409, "User already exists")
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path
-    
+    let avatar = ""; // Initialize avatar to an empty string
 
-    if(!avatarLocalPath){
-        throw new ApiError(400, "Avatar file is required")
+    if(req.files && req.files.avatar && req.files.avatar[0]){
+        const avatarLocalPath = req.files.avatar[0].path
+        avatar = await uploadOnCloudinary(avatarLocalPath)
+        if(!avatar){
+            throw new ApiError(400, "Error uploading avatar file")
+        }
+        avatar = avatar.url; // Assuming the URL is stored in avatar.url
     }
-    // console.log(avatarLocalPath);
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-    // console.log(avatar);
-    console.log(process.env.CLOUDINARY_CLOUD_NAME);
-    console.log(process.env.CLOUDINARY_API_KEY);
-    console.log(process.env.CLOUDINARY_API_SECRET);
-    if(!avatar){
-        throw new ApiError(400, "Avatar file is required")
-    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
-
 
     const influencer = await Influencers.create({
         name,
@@ -48,21 +43,20 @@ const registerInfluencer = async(req,res)=>{
         youtubeLink,
         instagramLink,
         password: hashedPassword,
-        avatar: avatar?.url || ""
+        avatar
     })
     
-    const craetedInfluencer = await Influencers.findById(influencer._id)
+    const createdInfluencer = await Influencers.findById(influencer._id)
 
-    if(!craetedInfluencer){
+    if(!createdInfluencer){
         throw new ApiError(500, "Something went wrong while registering the Influencer")
-
     }
 
     return res.status(201).json(
-        new ApiResponse(200, craetedInfluencer, "User registered successfully")
+        new ApiResponse(200, createdInfluencer, "User registered successfully")
     )
-   
 }
+
 
 const getAllInfluencers = async(req,res)=>{
     try {
