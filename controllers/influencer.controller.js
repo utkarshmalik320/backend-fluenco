@@ -15,11 +15,19 @@ const registerInfluencer = async(req,res)=>{
     }
 
     const existedUser = await Influencers.findOne({
-        $or: [{ username }, { email }]
+        $or: [{ "username": username }, { "email": email }]
     })
 
+    console.log(req.body, "reqbody");
+    console.log(username, email)
+
+    console.log(existedUser);
+
     if(existedUser){
-        throw new ApiError(409, "User already exists")
+        // throw new ApiError(409, "User already exists");
+        return res.status(400).json(
+            new ApiResponse(400, {}, "User exists already")
+        )
     }
 
     let avatar = ""; // Initialize avatar to an empty string
@@ -28,31 +36,44 @@ const registerInfluencer = async(req,res)=>{
         const avatarLocalPath = req.files.avatar[0].path
         avatar = await uploadOnCloudinary(avatarLocalPath)
         if(!avatar){
-            throw new ApiError(400, "Error uploading avatar file")
+            return res.status(400).json(
+            new ApiResponse(400, {}, "Error uploading avatar file")
+        )
         }
         avatar = avatar.url; // Assuming the URL is stored in avatar.url
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    console.log(name,
+        username, // Changed toLowerCase() to toLowerCase()
+        email,
+        category,
+        youtubeLink,
+        instagramLink,
+        hashedPassword,
+        avatar)
+
     const influencer = await Influencers.create({
         name,
-        username: username.toLowerCase(),
+        username, // Changed toLowerCase() to toLowerCase()
         email,
         category,
         youtubeLink,
         instagramLink,
         password: hashedPassword,
         avatar
-    })
+    });
     
     const createdInfluencer = await Influencers.findById(influencer._id)
 
     if(!createdInfluencer){
-        throw new ApiError(500, "Something went wrong while registering the Influencer")
+        return res.status(400).json(
+            new ApiResponse(400, {}, "Something went wrong while registering the Influencer")
+        )
     }
 
-    return res.status(201).json(
+    return res.status(200).json(
         new ApiResponse(200, createdInfluencer, "User registered successfully")
     )
 }
@@ -66,7 +87,10 @@ const getAllInfluencers = async(req,res)=>{
             new ApiResponse(200, influencers, "All Influencers achieved successfully")
         )
     } catch (error) {
-        throw new ApiError(400, "Not able to get the Influencers")
+        return res.status(400).json(
+            new ApiResponse(400, {}, "Not able to get the Influencers")
+        )
+        
     }
 }
 
@@ -75,18 +99,25 @@ const getInfluencer = async(req,res)=>{
     try {
         const {id} = req.params
         if(!id){
-            throw new ApiError(400, "Invalid Influencer Id")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Invalid Influencer Id")
+            )
         }
         console.log(id);
         const influencer = await Influencers.findById(id)
         if(!influencer){
-            new ApiError(400, "Influencer not found")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Influencer not found")
+            )
         }
         return res.status(201).json(
             new ApiResponse(200, influencer, "Influencer Found")
         )
     } catch (error) {
-        throw new ApiError(400, "Not able to find the influencer")
+        return res.status(400).json(
+            new ApiResponse(400, {}, "Not able to find the influencer")
+        )
+        
     }
 }
 
@@ -96,16 +127,20 @@ const deleteInfluencer = async(req,res)=>{
         const {id} = req.params
         const influencer = await Influencers.findById(id)
         if(!id){
-            throw new ApiError(400, "Not able to find the influencer")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Not able to find the influencer")
+            )
         }
         
         await influencer.deleteOne(influencer);
     
-        return res.status(201).json(
+        return res.status(200).json(
             new ApiResponse(200, "Influencer Deleted")
         )
     } catch (error) {
-        throw new ApiError(400, "Not able to find the influencer")
+        return res.status(400).json(
+            new ApiResponse(400, {}, "Not able to find the influencer")
+        )
     }
 
 }
@@ -116,19 +151,25 @@ const loginInfluencer = async(req,res)=>{
         const{ email, password} = req.body
         // console.log(username, email, password);
         if(!email){
-            throw new ApiError(400, "Email is required")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Email is required")
+            )
         }
         const influencer = await Influencers.findOne({email}).select("+password +refreshToken")
     
     
         if(!influencer){
-            throw new ApiError(404, "User does not exist")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "User does not exist")
+            )
         }
     
         const isPasswordValid = bcrypt.compare(password, influencer.password)
     
         if(!isPasswordValid){
-            throw new ApiError(401, "Invalid user credentials")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Invalid user credentials")
+            )
         }    
     
         const {accessToken, refreshToken} = await  generateAccessAndRefresTokens(influencer._id)
@@ -153,38 +194,202 @@ const loginInfluencer = async(req,res)=>{
                 "influencer logged In Successfully"
             )
         )
-    } catch (error) {
-        throw new ApiError(400, "Log In Failed")
-    }
-     
-
-
+    } catch (error) {res.status(500).json({
+        success: false,
+        message: error.message
+    })
 }
 
 
+}
 const logOutInfluencer = async(req,res)=>{
-    await Influencers.findByIdAndUpdate(
-        req.influencer._id,
-        {
-            $set:{
-                refreshToken: undefined
-            }
-        },
-        {
-            new: true
+    try {
+await Influencers.findByIdAndUpdate(
+    req.influencer._id,
+    {
+        $set:{
+            refreshToken: undefined
         }
-    )
-
-    const options = {
-        httpOnly: true,
-        secure: true
+    },
+    {
+        new: true
     }
+)
 
-    return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refresToken", options)
-    .json(new ApiResponse(200,{}, "Influencer Logged Out SuccessFully"))
+const options = {
+    httpOnly: true,
+    secure: true
 }
 
-module.exports = {getInfluencer, getAllInfluencers, registerInfluencer, deleteInfluencer, loginInfluencer, logOutInfluencer}
+return res
+.status(200)
+.clearCookie("accessToken", options)
+.clearCookie("refresToken", options)
+.json(new ApiResponse(200,{}, "Influencer Logged Out SuccessFully"))
+} 
+// Error Handling
+catch (error) {
+res.status(500).json({
+    success: false,
+    message: error.message
+})}
+}
+
+// Influencer Details updation (Will not get registered if username or email already exists in the database)
+
+const updateInfluencer = async (req, res) => {
+    try {
+        const { name,email, username, category, youtubeLink, instagramLink } = req.body;
+        const {id} = req.influencer; 
+
+        const userWithExistingEmail = await Influencers.findOne({ email });
+        if(userWithExistingEmail){
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Email already exists")
+            )
+
+        }
+        const userWithExistingUsername = await Influencers.findOne({ username });
+        if(userWithExistingUsername){
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Username already exists")
+            )
+        }
+
+        const influencer = await Influencers.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    name: name,
+                    youtubeLink: youtubeLink,
+                    instagramLink: instagramLink,
+                    username: username,
+                    email: email,
+                    category: category
+                }
+            },
+            { new: true }
+        );
+
+        if (!influencer) {
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Influencer not found")
+            )
+        }
+
+        res.status(200).json({
+            success: true,
+            data: influencer,
+            message: "Influencer updated successfully"
+        });
+    } catch (error) {
+        // console.error("Error updating influencer:");
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+
+
+
+
+// Updating PfP
+const updatePfp = async (req, res) => {
+    try {
+        const {id} = req.influencer;
+    
+        let influencer = await Influencers.findById(id);
+    
+        const avatarLocalPath = req.files?.avatar[0]?.path
+        console.log(avatarLocalPath);
+        if(!avatarLocalPath){  
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Avatar Local Path  file is required")
+            )
+        }
+        const avatar = await uploadOnCloudinary(avatarLocalPath)
+        console.log(avatar);
+        if(!avatar){
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Avatar file is required")
+            )
+        }
+    
+        influencer = await Influencers.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    avatar: avatar?.url || ""
+                }
+            },
+            { new: true }
+        )
+    
+        if(!influencer){
+            return res.status(400).json(
+                new ApiResponse(400, {}, "cannot update the profile picture")
+            )
+            
+        }
+        res.status(200).json(new ApiResponse(200, influencer, "Profile Photo updated successfully"))
+    
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });        
+    }
+    
+
+}
+
+
+
+// Updating Password
+
+const updatePassword = async (req, res) => {
+   try {
+     const {oldPassword, newPassword} = req.body;
+ 
+     const {id} = req.influencer;
+     const influencer = await Influencers.findById(id).select("+password");
+     if(!influencer){
+         return res.status(400).json(
+            new ApiResponse(400, {}, "Influencer not found")
+        )
+     }
+     const isPasswordValid = bcrypt.compare(oldPassword, influencer.password);
+     if(!isPasswordValid){
+         return res.status(400).json(
+            new ApiResponse(400, {}, "Invalid old password")
+        )
+     }
+     
+     const hashedPassword = await bcrypt.hash(newPassword, 10)
+ 
+     const updatedInfluencer = await Influencers.findByIdAndUpdate(
+         id,
+         {
+             $set:{
+                 password: hashedPassword
+             }
+         },
+         {
+             new: true
+         })
+ 
+ 
+     return res.status(200).json(new ApiResponse(200, updatedInfluencer, "Password updated successfully"))
+     
+   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+   }
+
+}
+
+
+
+
+
+
+module.exports = {getInfluencer, getAllInfluencers, registerInfluencer, deleteInfluencer, loginInfluencer, logOutInfluencer, 
+    // Below are updation methods
+    updateInfluencer, updatePfp, updatePassword}
+
+
