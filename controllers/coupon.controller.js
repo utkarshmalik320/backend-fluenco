@@ -9,7 +9,9 @@ const addCoupon  = async(req,res,/*next*/)=>{
         // const influencer = req.influencer
         const existingCoupon = await Coupons.findOne({couponCode})
         if(existingCoupon){
-            throw new ApiError(400, "Coupon already exists")
+            return res.status(400).json(
+                new ApiResponse(400, {}, "Coupon already exists")
+            )
     
         }
         

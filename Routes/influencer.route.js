@@ -20,8 +20,7 @@ router.route("/signup").post(
 router.route("/login").post(loginInfluencer)
 router.route("/logout").get(verifyJWT, logOutInfluencer)
 router.route("/getAllInfluencers").get(getAllInfluencers)
-router.route("/getInfluencer/:id").get(getInfluencer)
-router.route("/deleteInfluencer/:id").delete(deleteInfluencer)
+
 
 // Updation routes:-
 

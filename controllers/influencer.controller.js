@@ -11,7 +11,9 @@ const registerInfluencer = async(req,res)=>{
     if(
         [name, username, category, password].some((field)=> field?.trim() === "")    
     ){
-        throw new ApiError(400, "Name, username, category, password are required fields")
+        return res.status(400).json(
+            new ApiResponse(400, {}, "Name, username, category, password are required fields")
+        )
     }
 
     const existedUser = await Influencers.findOne({
@@ -237,25 +239,21 @@ res.status(500).json({
 }
 
 // Influencer Details updation (Will not get registered if username or email already exists in the database)
-
 const updateInfluencer = async (req, res) => {
     try {
         const { name,email, username, category, youtubeLink, instagramLink } = req.body;
         const {id} = req.influencer; 
 
-        const userWithExistingEmail = await Influencers.findOne({ email });
+        const userWithExistingEmail = await 
+     Influencers.findOne({ email });
         if(userWithExistingEmail){
-            return res.status(400).json(
-                new ApiResponse(400, {}, "Email already exists")
-            )
+            throw new ApiError(400, "Email already exists");
 
         }
-        const userWithExistingUsername = await Influencers.findOne({ username });
-        if(userWithExistingUsername){
-            return res.status(400).json(
-                new ApiResponse(400, {}, "Username already exists")
-            )
-        }
+        // const userWithExistingUsername = await Influencers.findOne({ username });
+        // if(userWithExistingUsername){
+        //     throw new ApiError(400, "Username already exists");
+        // }
 
         const influencer = await Influencers.findByIdAndUpdate(
             id,
@@ -273,9 +271,7 @@ const updateInfluencer = async (req, res) => {
         );
 
         if (!influencer) {
-            return res.status(400).json(
-                new ApiResponse(400, {}, "Influencer not found")
-            )
+            throw new ApiError("Influencer not found")
         }
 
         res.status(200).json({
