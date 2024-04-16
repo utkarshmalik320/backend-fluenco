@@ -17,7 +17,7 @@ router.route("/signup").post(
     registerInfluencer
 )
 
-router.route("/login").get(loginInfluencer)
+router.route("/login").post(loginInfluencer)
 router.route("/logout").get(verifyJWT, logOutInfluencer)
 router.route("/getAllInfluencers").get(getAllInfluencers)
 router.route("/getInfluencer/:id").get(getInfluencer)

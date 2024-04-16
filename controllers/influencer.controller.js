@@ -145,63 +145,64 @@ const deleteInfluencer = async(req,res)=>{
 
 }
 
-
-const loginInfluencer = async(req,res)=>{
+const loginInfluencer = async (req, res) => {
     try {
-        const{ email, password} = req.body
-        // console.log(username, email, password);
-        if(!email){
+        const { email, password } = req.body;
+
+        if (!email || !password) {
             return res.status(400).json(
-                new ApiResponse(400, {}, "Email is required")
-            )
+                new ApiResponse(400, {}, "Email and password are required")
+            );
         }
-        const influencer = await Influencers.findOne({email}).select("+password +refreshToken")
-    
-    
-        if(!influencer){
+
+        const influencer = await Influencers.findOne({ email }).select("+password +refreshToken");
+
+        if (!influencer) {
             return res.status(400).json(
-                new ApiResponse(400, {}, "User does not exist")
-            )
+                new ApiResponse(400, {}, "Invalid credentials")
+            );
         }
-    
-        const isPasswordValid = bcrypt.compare(password, influencer.password)
-    
-        if(!isPasswordValid){
+
+        const isPasswordValid = await bcrypt.compare(password, influencer.password);
+
+        if (!isPasswordValid) {
             return res.status(400).json(
-                new ApiResponse(400, {}, "Invalid user credentials")
-            )
-        }    
-    
-        const {accessToken, refreshToken} = await  generateAccessAndRefresTokens(influencer._id)
-    
-        const loggedInInfluencer = await Influencers.findById(influencer._id)
-    
+                new ApiResponse(400, {}, "Invalid credentials")
+            );
+        }
+
+        const { accessToken, refreshToken } = await generateAccessAndRefresTokens(influencer._id);
+        const loggedInInfluencer = await Influencers.findById(influencer._id);
+
         const options = {
             httpOnly: true,
             secure: true
-        }
+        };
 
         return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refresToken", refreshToken, options)
-        .json(
-            new ApiResponse(
-                200,
-                {
-                    influencer: loggedInInfluencer, accessToken, refreshToken
-                },
-                "influencer logged In Successfully"
-            )
-        )
-    } catch (error) {res.status(500).json({
-        success: false,
-        message: error.message
-    })
-}
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refresToken", refreshToken, options)
+            .json(
+                new ApiResponse(
+                    200,
+                    {
+                        influencer: loggedInInfluencer,
+                        accessToken,
+                        refreshToken
+                    },
+                    "Influencer logged in successfully"
+                )
+            );
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json(
+            new ApiResponse(500, {}, "Internal server error")
+        );
+    }
+};
 
 
-}
 const logOutInfluencer = async(req,res)=>{
     try {
 await Influencers.findByIdAndUpdate(
