@@ -26,11 +26,11 @@ const couponSchema = new mongoose.Schema({
     termsCondition:{
         type: String,
     },
-    // influencer:{
-    //     type: mongoose.Types.ObjectId,
-    //     required: true,
-    //     ref: "Influencer"
-    // }
+    influencer:{
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Influencer"
+    }
 }, {timestamps: true})
 
 

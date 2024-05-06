@@ -214,18 +214,78 @@ const updateInfluencer = async (req, res) => {
         const { name,email, username, category, youtubeLink, instagramLink } = req.body;
         const {id} = req.influencer; 
 
-        const userWithExistingEmail = await 
+        
+        // const userWithExistingUsername = await Influencers.findOne({ username });
+        // if(userWithExistingUsername){
+        //     throw new ApiError(400, "Username already exists");
+        // }
+        let influencer = await Influencers.findById(id);
+        if(email == influencer.email){
+            const userWithExistingUsername = await Influencers.findOne({ username });
+        if(userWithExistingUsername){
+            throw new ApiError(400, "Username already exists");
+
+        }
+
+            influencer = await Influencers.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        name: name,
+                        youtubeLink: youtubeLink,
+                        instagramLink: instagramLink,
+                        username: username,
+                        category: category
+                    }
+                },
+                { new: true }
+            );
+        }
+
+        else if(username == influencer.username){
+            const userWithExistingEmail = await 
      Influencers.findOne({ email });
         if(userWithExistingEmail){
             throw new ApiError(400, "Email already exists");
 
         }
-        // const userWithExistingUsername = await Influencers.findOne({ username });
-        // if(userWithExistingUsername){
-        //     throw new ApiError(400, "Username already exists");
-        // }
 
-        const influencer = await Influencers.findByIdAndUpdate(
+            influencer = await Influencers.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        name: name,
+                        youtubeLink: youtubeLink,
+                        instagramLink: instagramLink,
+                        email: email,
+                        category: category
+                    }
+                },
+                { new: true }
+            );
+        }
+        else if(username == influencer.username && email == influencer.email){
+            influencer = await Influencers.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        name: name,
+                        youtubeLink: youtubeLink,
+                        instagramLink: instagramLink,
+                        category: category
+                    }
+                },
+                { new: true }
+            );
+        }
+        else{
+            const userWithExistingEmail = await 
+     Influencers.findOne({ email });
+        if(userWithExistingEmail){
+            throw new ApiError(400, "Email already exists");
+
+        }
+        influencer = await Influencers.findByIdAndUpdate(
             id,
             {
                 $set: {
@@ -239,6 +299,7 @@ const updateInfluencer = async (req, res) => {
             },
             { new: true }
         );
+    }
 
         if (!influencer) {
             throw new ApiError("Influencer not found")
