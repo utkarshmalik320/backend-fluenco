@@ -7,77 +7,47 @@ const { generateAccessAndRefresTokens } = require("../utils/tokens.js")
 
 
 const registerInfluencer = async(req,res)=>{
-    const {name, username, category, password, email, youtubeLink, instagramLink} = req.body
-    if(
-        [name, username, category, password].some((field)=> field?.trim() === "")    
-    ){
-        return res.status(400).json(
-            new ApiResponse(400, {}, "Name, username, category, password are required fields")
-        )
-    }
+    try {
+        const { name, username, category, password, email, youtubeLink, instagramLink } = req.body;
 
-    const existedUser = await Influencers.findOne({
-        $or: [{ "username": username }, { "email": email }]
-    })
-
-    console.log(req.body, "reqbody");
-    console.log(username, email)
-
-    console.log(existedUser);
-
-    if(existedUser){
-        // throw new ApiError(409, "User already exists");
-        return res.status(400).json(
-            new ApiResponse(400, {}, "User exists already")
-        )
-    }
-
-    let avatar = ""; // Initialize avatar to an empty string
-
-    if(req.files && req.files.avatar && req.files.avatar[0]){
-        const avatarLocalPath = req.files.avatar[0].path
-        avatar = await uploadOnCloudinary(avatarLocalPath)
-        if(!avatar){
-            return res.status(400).json(
-            new ApiResponse(400, {}, "Error uploading avatar file")
-        )
+        if ([name, username, category, password].some((field) => !field || field.trim() === "")) {
+            throw new ApiError(400, "Name, username, category, password are required fields");
         }
-        avatar = avatar.url; // Assuming the URL is stored in avatar.url
+
+        const existedUser = await Influencers.findOne({ $or: [{ username }, { email }] });
+        if (existedUser) {
+            throw new ApiError(409, "User already exists");
+        }
+
+        let avatarUrl = "";
+        if (req.files && req.files.avatar && req.files.avatar[0] && req.files.avatar[0].path) {
+            const avatarLocalPath = req.files.avatar[0].path;
+            const avatar = await uploadOnCloudinary(avatarLocalPath);
+            if (!avatar) {
+                throw new ApiError(400, "Failed to upload avatar");
+            }
+            avatarUrl = avatar.url;
+        }
+
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const influencer = await Influencers.create({
+            name,
+            username: username.toLowerCase(),
+            email,
+            category,
+            youtubeLink,
+            instagramLink,
+            password: hashedPassword,
+            avatar: avatarUrl,
+        });
+
+
+        return res.status(200).json(new ApiResponse(200, influencer, "User registered successfully"));
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    console.log(name,
-        username, // Changed toLowerCase() to toLowerCase()
-        email,
-        category,
-        youtubeLink,
-        instagramLink,
-        hashedPassword,
-        avatar)
-
-    const influencer = await Influencers.create({
-        name,
-        username, // Changed toLowerCase() to toLowerCase()
-        email,
-        category,
-        youtubeLink,
-        instagramLink,
-        password: hashedPassword,
-        avatar
-    });
-    
-    const createdInfluencer = await Influencers.findById(influencer._id)
-
-    if(!createdInfluencer){
-        return res.status(400).json(
-            new ApiResponse(400, {}, "Something went wrong while registering the Influencer")
-        )
-    }
-
-    return res.status(200).json(
-        new ApiResponse(200, createdInfluencer, "User registered successfully")
-    )
 }
 
 
@@ -99,7 +69,7 @@ const getAllInfluencers = async(req,res)=>{
 
 const getInfluencer = async(req,res)=>{
     try {
-        const {id} = req.params
+        const {id} = req.influencer;
         if(!id){
             return res.status(400).json(
                 new ApiResponse(400, {}, "Invalid Influencer Id")

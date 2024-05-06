@@ -26,7 +26,7 @@ router.route("/getAllInfluencers").get(getAllInfluencers)
 
 
 // 1. Update User Basic InforMation
-router.route("/update").post(verifyJWT,updateInfluencer)
+router.route("/update").post(verifyJWT, upload.none(), updateInfluencer)
 // 2. Update User Profile Picture
 router.route("/updateProfilePicture").post(verifyJWT,
     upload.fields([
@@ -39,7 +39,7 @@ router.route("/updateProfilePicture").post(verifyJWT,
 router.route("/updatePassword").post(verifyJWT, updatePassword)
 
 
-router.route("/getInfluencer/:id").get(getInfluencer)
+router.route("/getInfluencer").get(verifyJWT, getInfluencer)
 router.route("/deleteInfluencer/:id").delete(deleteInfluencer)
 
 
