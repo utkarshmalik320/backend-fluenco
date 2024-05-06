@@ -8,9 +8,7 @@ const app = express()
 
 module.exports = { app };
 
-app.use(cors({
-    origin: "*" ,
-}));
+app.use(cors({ credentials: true, origin: 'http://localhost:5173' })); //Change the origin according to need
 
 
 config({

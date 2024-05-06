@@ -2,8 +2,11 @@ const jwt = require("jsonwebtoken")
 const { Influencers } = require("../Models/influencer.model")
 const { ApiError } = require("../utils/apiError")
 
+
+
+//Error handling
 const verifyJWT = async(req,res,next)=>{
-    // try {
+    try {
         const token = req.cookies?.accessToken
 
         if(!token){
@@ -23,9 +26,9 @@ const verifyJWT = async(req,res,next)=>{
 
         req.influencer = influencer
         next()
-    // } catch (error) {
-    //     throw new ApiError(401, error?.message)
-    // }
+    } catch (error) {
+        res.status(500).json(error)
+    }
 }
 
 module.exports = {verifyJWT}
