@@ -69,7 +69,7 @@ const getAllInfluencers = async(req,res)=>{
 
 const getInfluencer = async(req,res)=>{
     try {
-        const {id} = req.params
+        const {id} = req.influencer;
         if(!id){
             return res.status(400).json(
                 new ApiResponse(400, {}, "Invalid Influencer Id")
