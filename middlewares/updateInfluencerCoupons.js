@@ -10,6 +10,7 @@ const updateCoupons = async (req,res)=>{
     const influencer = await Influencers.findById(decodedToken._id)
     console.log(coupon);
     influencer.coupons.push(coupon)
+    console.log("Inside update middleware");
     
 
     await influencer.save()
